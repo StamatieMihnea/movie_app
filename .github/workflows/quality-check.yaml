@@ -1,0 +1,16 @@
+  on: push
+  jobs:
+    quality-assurance:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get code
+          uses: actions/checkout@v3
+
+        - name: Get Flutter
+          uses: subosito/flutter-action@v2
+
+        - name: Check Format
+          run: flutter format --line-length 120 --set-exit-if-changed ./lib
+
+        - name: Analyze code
+          run: flutter analyze
