@@ -4,6 +4,6 @@ Sample movie app that retrieves data from YTS YIFY API
 
 ## Layout Overview
 
-![](../movie_app/img.png)
+![](MovieAppAnimated.gif)
 
-![](../movie_app/MovieApp.gif)
+![img.png](img.png)
