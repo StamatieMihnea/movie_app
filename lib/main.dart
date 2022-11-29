@@ -47,9 +47,7 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
             final List<String> genres = <String>[
               ...(movieData['genres'] as List<dynamic>).map((dynamic element) => element as String)
             ];
-            final List<String> truncatedGenres = genres.getRange(0, 1).toList();
-            final StringBuffer buffer = StringBuffer()..writeAll(truncatedGenres, '/');
-            final String genresString = buffer.toString();
+            final String genresString = genres.first;
             _isLoading = false;
             return MovieModel(
               title: movieData['title'] as String,
