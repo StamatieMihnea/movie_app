@@ -32,7 +32,7 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
   );
   final List<MovieModel> _movies = <MovieModel>[];
   bool _isLoading = true;
-  dynamic _currentPageValue = 0;
+  double _currentPageValue = 0;
 
   void _getMovies() {
     _isLoading = true;
@@ -48,8 +48,7 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
               ...(movieData['genres'] as List<dynamic>).map((dynamic element) => element as String)
             ];
             final List<String> truncatedGenres = genres.getRange(0, 1).toList();
-            final StringBuffer buffer = StringBuffer()
-              ..writeAll(truncatedGenres, '/');
+            final StringBuffer buffer = StringBuffer()..writeAll(truncatedGenres, '/');
             final String genresString = buffer.toString();
             _isLoading = false;
             return MovieModel(
@@ -71,7 +70,7 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
     _getMovies();
     pageController.addListener(() {
       setState(() {
-        _currentPageValue = pageController.page;
+        _currentPageValue = pageController.page != null ? pageController.page! : 0;
       });
     });
   }
@@ -139,20 +138,14 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
                   return Column(
                     children: <Widget>[
                       Transform(
-                        transform: Matrix4.rotationX((_currentPageValue as double) - index),
+                        transform: Matrix4.rotationX((_currentPageValue - index) * .5),
                         child: PhysicalModel(
                           elevation: 30,
                           color: Colors.transparent,
                           borderRadius: BorderRadius.circular(20),
                           child: Container(
-                            height: MediaQuery
-                                .of(context)
-                                .size
-                                .height * 0.6,
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.6,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            width: MediaQuery.of(context).size.width * 0.6,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               image: DecorationImage(
@@ -166,76 +159,83 @@ class _MovieAppHomePageState extends State<MovieAppHomePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        _movies[index % _movies.length].title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Transform(
+                        transform: Matrix4.identity()..scale(1 - (index - _currentPageValue).abs()),
+                        child: Column(
                           children: <Widget>[
                             Text(
-                              _movies[index % _movies.length].genres,
+                              _movies[index % _movies.length].title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    _movies[index % _movies.length].genres,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${_movies[index % _movies.length].duration} min',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Text(
-                              '${_movies[index % _movies.length].duration} min',
+                              '${_movies[index % _movies.length].rating}',
                               style: const TextStyle(
                                 color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              'Rating',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 35),
+                                  child: Text(
+                                    'Buy tickets',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Text(
-                        '${_movies[index % _movies.length].rating}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Text(
-                        'Rating',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 35),
-                            child: Text(
-                              'Buy tickets',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      )
                     ],
                   );
                 },
